@@ -1,10 +1,8 @@
 import client from "../client.js";
 
-export const Query = {
-  seeProfile: (_, { username }) =>
-    client.user.findUnique({
-      where: {
-        username,
-      },
-    }),
-};
+export const seeProfile = (_, { userName }) =>
+  client.user.findUnique({
+    where: {
+      userName,
+    },
+  });
