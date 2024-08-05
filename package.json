@@ -1,21 +1,26 @@
 {
   "name": "instaclone-backend-repository",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "server.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --exec babel-node index",
+    "dev": "nodemon --exec babel-node server.js",
     "migrate": "npx prisma migrate dev",
     "studio": "npx prisma studio"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "module",
   "dependencies": {
     "@apollo/server": "^4.10.5",
+    "@graphql-tools/load-files": "^7.0.0",
+    "@graphql-tools/merge": "^9.0.4",
+    "@graphql-tools/schema": "^10.0.4",
     "@prisma/client": "^5.17.0",
-    "graphql": "^16.9.0"
+    "dotenv": "^16.4.5",
+    "graphql": "^16.9.0",
+    "graphql-tag": "^2.12.6"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
