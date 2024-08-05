@@ -12,10 +12,7 @@ type LoginResult {
   token: String
   error: String
 }
-type editProfileResult {
-  ok: Boolean!
-  error: String
-}
+
 type Mutation {
   createAccount(
     firstName: String!
@@ -25,13 +22,6 @@ type Mutation {
     password: String!
   ): User
   login(userName: String!, password: String!): LoginResult!
-  editProfile(
-    firstName: String
-    lastName: String
-    userName: String
-    email: String
-    password: String
-  ): editProfileResult!
 }
 
 type Query {
