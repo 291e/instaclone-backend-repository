@@ -1,53 +1,51 @@
-import bcrpyt from "bcrypt";
+import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import client from "../../client";
-
+import { protectResolver } from "../users.utils";
 const resolver = {
   Mutation: {
-    editProfile: async (
-      _: any,
-      {
-        firstName,
-        lastName,
-        userName,
-        email,
-        password: newPassword,
-      }: {
-        firstName: string;
-        lastName?: string;
-        userName: string;
-        email: string;
-        password: string;
-      },
-      { token }
-    ) => {
-      //@ts-ignore
-      const { id } = await jwt.verify(token, process.env.SECRET_KEY);
-      let uglyPassword = null;
-      if (newPassword) {
-        uglyPassword = await bcrpyt.hash(newPassword, 10);
+    editProfile: protectResolver(
+      async (
+        _,
+        { firstName, lastName, userName, email, password: newPassword },
+        { loggedInUser }
+      ) => {
+        try {
+          let uglyPassword = null;
+          if (newPassword) {
+            uglyPassword = await bcrypt.hash(newPassword, 10);
+          }
+
+          const updatedUser = await client.user.update({
+            where: { id: loggedInUser.id },
+            data: {
+              firstName,
+              lastName,
+              userName,
+              email,
+              ...(uglyPassword && { password: uglyPassword }),
+            },
+          });
+
+          if (updatedUser) {
+            return {
+              ok: true,
+            };
+          } else {
+            return {
+              ok: false,
+              error: "프로필을 업데이트할 수 없었습니다.",
+            };
+          }
+        } catch (error) {
+          console.error("프로필 업데이트 중 에러:", error);
+          return {
+            ok: false,
+            error: "인증 오류 또는 프로필 업데이트 실패",
+          };
+        }
       }
-      const ok = await client.user.update({
-        where: { id },
-        data: {
-          firstName,
-          lastName,
-          userName,
-          email,
-          ...(uglyPassword && { password: uglyPassword }),
-        },
-      });
-      if (ok) {
-        return {
-          ok: true,
-        };
-      } else {
-        return {
-          ok: false,
-          error: "프로필을 업데이트할 수 없었습니다.",
-        };
-      }
-    },
+    ),
   },
 };
 
